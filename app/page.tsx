@@ -28,14 +28,16 @@ const questions = [
   },
   {
     key: "treatment",
-    title: "Which treatment would you like to explore?",
+    title: "What would changing your smile mean most to you?",
     helper:
-      "Not sure yet? That is completely fine. The Aria team can explain the differences.",
+      "Choose the result that feels most important in your life right now.",
     options: [
-      "Express Smile, $3,000",
-      "Porcelain Smile, $5,000",
-      "Dental Implants, from $2,500",
-      "I need help choosing",
+      "Feeling confident in photos",
+      "Smiling without hiding my teeth",
+      "Feeling more comfortable around other people",
+      "Replacing missing or damaged teeth",
+      "Feeling ready for an upcoming event",
+      "Understanding what options are available",
     ],
   },
   {
@@ -203,7 +205,7 @@ export default function Home() {
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
                 Your smile questionnaire is complete
               </p>
-              <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+              <h1 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
                 Thank you. The Aria team will contact you within 24 hours.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 sm:text-base">
@@ -381,7 +383,7 @@ export default function Home() {
             onClick={beginQuiz}
             className="shrink-0 rounded-full bg-[#d6b968] px-4 py-2.5 text-xs font-bold text-black sm:px-5 sm:text-sm"
           >
-            Find My Smile Option
+            Start My Smile Review
           </button>
         </div>
       </header>
@@ -393,17 +395,17 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
               Aria Smile Design, Miami
             </p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-7xl">
+            <h1 className="mt-4 max-w-3xl font-[Georgia,serif] text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-7xl">
               Feel confident showing your smile again.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8 md:text-xl">
-              Take the 60-second smile questionnaire to explore treatment
-              options, pricing, financing, travel requirements, and your next
-              step with Aria Smile Design.
+              Take the 60-second smile questionnaire so Aria can understand
+              your goals, timeline, travel plans, and what you hope to change
+              about your smile.
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-[#d6b968] sm:text-base">
-              Treatment options start from $2,500. Financing may be available
-              for qualified applicants.
+              Your answers help Aria prepare a more relevant conversation
+              before asking you to send photos of your smile.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -412,7 +414,7 @@ export default function Home() {
                 onClick={beginQuiz}
                 className="rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black"
               >
-                Find My Smile Option
+                Start My Smile Review
               </button>
               <a
                 href="#what-happens-next"
@@ -448,7 +450,7 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
               You are not alone
             </p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
               Do you find yourself hiding your smile?
             </h2>
           </div>
@@ -482,7 +484,7 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
               A useful first step
             </p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
               Know what happens after you submit.
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
@@ -494,10 +496,10 @@ export default function Home() {
 
           <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["1", "Review your goals", "Aria reviews your smile concerns and the treatment option you selected."],
-              ["2", "Discuss the right path", "The team explains which options may be worth exploring further."],
-              ["3", "Review the details", "Talk through timing, Miami travel, pricing, and financing availability."],
-              ["4", "Plan the consultation", "Schedule the right next step when the treatment and timing fit."],
+              ["1", "Complete the questionnaire", "Tell Aria what you want to change, when you want to begin, and whether you can travel to Miami."],
+              ["2", "Speak with Aria", "A representative contacts you within 24 hours and reviews the answers you submitted."],
+              ["3", "Send smile photos", "The representative explains how to send clear photos of your smile and teeth for review."],
+              ["4", "Discuss your next step", "Aria reviews the information and discusses possible treatment, timing, travel, pricing, and financing."],
             ].map(([number, title, text]) => (
               <article
                 key={number}
@@ -516,67 +518,46 @@ export default function Home() {
 
       <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
-            Treatment options
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-            A clearer path to the smile you want.
-          </h2>
-
-          <div className="mt-9 grid gap-4 md:grid-cols-3">
-            {[
-              {
-                title: "Express Smile",
-                price: "$3,000",
-                body:
-                  "A focused cosmetic option for patients who want a faster path to a cleaner, more balanced smile.",
-                concerns:
-                  "May help improve concerns related to color, shape, minor spacing, or uneven-looking teeth.",
-              },
-              {
-                title: "Porcelain Smile",
-                price: "$5,000",
-                body:
-                  "A premium porcelain option for patients looking for a more complete cosmetic transformation.",
-                concerns:
-                  "May improve color, shape, spacing, symmetry, and the overall appearance of the smile.",
-              },
-              {
-                title: "Dental Implants",
-                price: "From $2,500",
-                body:
-                  "A restorative option for patients looking to replace a missing tooth with a stable, natural-looking solution.",
-                concerns:
-                  "Designed to restore appearance and function when a tooth is missing.",
-              },
-            ].map((item) => (
-              <article
-                key={item.title}
-                className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm"
+          <div className="grid gap-8 md:grid-cols-[.85fr_1.15fr] md:items-center md:gap-12">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
+                Personalized smile review
+              </p>
+              <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+                Your smile should not be reduced to a price or a package.
+              </h2>
+            </div>
+            <div>
+              <p className="text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
+                Every smile begins with a different concern. Aria first learns
+                what you want to change, how soon you want to move forward, and
+                whether you can travel to Miami. After the team speaks with you,
+                they will explain how to send photos of your smile so your
+                situation can be reviewed more carefully.
+              </p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {[
+                  "Color, shape, spacing, or symmetry",
+                  "Chipped, worn, or damaged teeth",
+                  "Missing teeth or restorative concerns",
+                  "A complete cosmetic smile transformation",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-black/10 bg-white p-4 text-sm font-medium leading-6"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={beginQuiz}
+                className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
               >
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8d7229] sm:text-sm">
-                  {item.price}
-                </p>
-                <h3 className="mt-3 text-2xl font-semibold">{item.title}</h3>
-                <p className="mt-4 leading-7 text-black/60">{item.body}</p>
-                <div className="mt-5 rounded-2xl bg-[#f5f1e8] p-4 text-sm leading-6 text-black/60">
-                  {item.concerns}
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="mb-4 text-base font-medium sm:text-lg">
-              Not sure which treatment is right for you?
-            </p>
-            <button
-              type="button"
-              onClick={beginQuiz}
-              className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
-            >
-              Find My Best Option
-            </button>
+                Start My Smile Review
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -588,13 +569,13 @@ export default function Home() {
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
                 Personalized treatment path
               </p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-                Find out which smile option may fit you.
+              <h2 className="mt-4 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+                Tell Aria what you want to change about your smile.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
-                Your answers help Aria understand what you want to improve, how
-                soon you want treatment, whether you can travel to Miami, and
-                which payment option may work for you.
+                Your answers give the Aria team context before they contact
+                you. This helps the first conversation focus on your goals,
+                timing, Miami travel, and the next step that may make sense.
               </p>
               <div className="mx-auto mt-6 grid max-w-2xl gap-2 text-sm text-white/50 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
                 <span>✓ About 60 seconds</span>
@@ -674,9 +655,9 @@ export default function Home() {
                     Let Aria review your answers.
                   </h2>
                   <p className="mt-4 max-w-2xl text-sm leading-7 text-black/60 sm:text-base">
-                    Enter your information so the Aria team can discuss your
-                    treatment interests, timing, travel, pricing, financing,
-                    and consultation availability.
+                    Enter your information so an Aria representative can
+                    contact you within 24 hours, review your answers, and explain
+                    how to send photos of your smile and teeth.
                   </p>
                   <p className="mt-3 text-sm font-medium text-black/55">
                     There is no obligation to begin treatment.
@@ -735,7 +716,7 @@ export default function Home() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Smile transformations
           </p>
-          <h2 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 max-w-4xl font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Imagine feeling comfortable showing your smile again.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
@@ -764,7 +745,7 @@ export default function Home() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Patient experiences
           </p>
-          <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Patients remember more than the final result.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
@@ -801,7 +782,7 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
               Meet your dentist
             </p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
+            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl">
               Experience, precision, and a personal approach.
             </h2>
             <p className="mt-5 text-sm leading-7 text-white/60 sm:text-base">
@@ -833,16 +814,17 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
               Flexible payment options
             </p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-              Explore your options before deciding what is possible.
+            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+              Understand your options before deciding what is possible.
             </h2>
           </div>
           <div>
             <p className="text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
-              Aria works with third-party financing providers that may offer
-              flexible payment options to qualified applicants. The team can
-              explain available choices and help you understand which option
-              may fit your situation.
+              Treatment recommendations and final pricing depend on your
+              individual situation. Aria works with third-party financing
+              providers that may offer flexible payment options to qualified
+              applicants. The team can explain available choices after learning
+              more about your smile goals.
             </p>
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
               {["Cherry", "CareCredit", "Sunbit", "Proceed Finance"].map(
@@ -861,7 +843,7 @@ export default function Home() {
               onClick={beginQuiz}
               className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
             >
-              See My Treatment Options
+              Start My Smile Review
             </button>
           </div>
         </div>
@@ -872,7 +854,7 @@ export default function Home() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] sm:text-sm">
             Traveling to Miami
           </p>
-          <h2 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 max-w-4xl font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Understand the process before you make travel plans.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
@@ -933,21 +915,21 @@ export default function Home() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
             Your next step
           </p>
-          <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl md:text-6xl">
+          <h2 className="mt-4 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-6xl">
             You have thought about changing your smile. Now find out what your
             next step could be.
           </h2>
           <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/60 sm:text-lg sm:leading-8">
-            Complete the short questionnaire to explore treatment options,
-            pricing, financing, travel requirements, and whether Aria Smile
-            Design may be a fit for you.
+            Complete the short questionnaire so Aria can understand your
+            goals, contact you within 24 hours, and explain how to submit photos
+            of your smile for review.
           </p>
           <button
             type="button"
             onClick={beginQuiz}
             className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black sm:w-auto"
           >
-            Find My Smile Option
+            Start My Smile Review
           </button>
           <p className="mt-4 text-sm text-white/40">
             Takes about 60 seconds. No obligation.
@@ -965,8 +947,8 @@ export default function Home() {
             className="h-auto w-28 sm:w-32"
           />
           <p>
-            Proof of concept. Treatment suitability, pricing, and financing
-            require confirmation by Aria Smile Design.
+            Concept presentation for Aria Smile Design. Treatment suitability,
+            pricing, and financing require confirmation by the dental team.
           </p>
         </div>
       </footer>
