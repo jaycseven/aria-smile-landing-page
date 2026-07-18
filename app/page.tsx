@@ -15,7 +15,7 @@ const questions = [
   {
     key: "concern",
     title: "What would you most like to improve about your smile?",
-    helper: "Choose the concern that matters most to you.",
+    helper: "Choose the concern that matters most to you right now.",
     options: [
       "Color or staining",
       "Shape or size",
@@ -28,13 +28,13 @@ const questions = [
   },
   {
     key: "treatment",
-    title: "Which treatment are you most interested in exploring?",
+    title: "Which treatment would you like to explore?",
     helper:
-      "It is okay if you are unsure. The Aria team can explain the differences.",
+      "Not sure yet? That is completely fine. The Aria team can explain the differences.",
     options: [
-      "Express Smile — $3,000",
-      "Porcelain Smile — $5,000",
-      "Dental Implants — from $2,500",
+      "Express Smile, $3,000",
+      "Porcelain Smile, $5,000",
+      "Dental Implants, from $2,500",
       "I need help choosing",
     ],
   },
@@ -42,7 +42,7 @@ const questions = [
     key: "timeline",
     title: "When would you ideally like to begin treatment?",
     helper:
-      "This helps the team understand how quickly you would like to move forward.",
+      "This helps Aria understand how quickly you would like to move forward.",
     options: [
       "As soon as possible",
       "Within 30 days",
@@ -54,8 +54,9 @@ const questions = [
   {
     key: "travel",
     title:
-      "Aria Smile Design performs treatment in Miami. Would you be able to travel to Miami?",
-    helper: "Patients visit Aria from across the country.",
+      "Treatment takes place at Aria Smile Design in Miami. Can you travel to Miami?",
+    helper:
+      "Aria welcomes patients from across the United States. Scheduling can be reviewed before you travel.",
     options: [
       "Yes",
       "Yes, depending on scheduling",
@@ -98,13 +99,13 @@ export default function Home() {
       answers.travel === "Yes" ||
       answers.travel === "Yes, depending on scheduling";
 
-    const soon = [
+    const readySoon = [
       "As soon as possible",
       "Within 30 days",
       "Within one to three months",
     ].includes(answers.timeline);
 
-    const payment = [
+    const hasPaymentPath = [
       "Financing",
       "Credit or debit card",
       "Savings or cash",
@@ -113,51 +114,61 @@ export default function Home() {
 
     if (answers.travel === "No") {
       return {
-        name: "Treatment Is Completed in Miami",
-        internalName: "Currently Unqualified",
+        publicTitle: "Treatment is completed in Miami",
+        internalTitle: "Currently Unqualified",
         qualified: false,
-        reason:
-          "Travel is currently the main limitation. The Aria team can provide more information about scheduling and the treatment process.",
+        explanation:
+          "Travel is currently the main limitation. Aria can still explain scheduling and the treatment process.",
       };
     }
 
-    if (canTravel && soon && payment) {
+    if (canTravel && readySoon && hasPaymentPath) {
       return {
-        name: "You May Be a Strong Fit for the Next Step",
-        internalName: "Qualified Lead",
+        publicTitle: "You may be ready for the next step",
+        internalTitle: "Qualified Lead",
         qualified: true,
-        reason:
-          "Based on your answers, you may be ready to speak with the Aria team about treatment options, scheduling, and financing.",
+        explanation:
+          "This visitor can travel to Miami, wants treatment within 90 days, and has a realistic payment path.",
       };
     }
 
-    if (canTravel && (soon || payment)) {
+    if (canTravel && (readySoon || hasPaymentPath)) {
       return {
-        name: "Your Smile Journey Can Start with a Conversation",
-        internalName: "Sales Review",
+        publicTitle: "Your next step can start with a conversation",
+        internalTitle: "Sales Review",
         qualified: false,
-        reason:
-          "The Aria team can help clarify timing, travel, payment options, and the next step.",
+        explanation:
+          "This visitor shows meaningful interest but needs more qualification around timing or payment.",
       };
     }
 
     return {
-      name: "Thank You for Exploring Your Options",
-      internalName: "Nurture Lead",
+      publicTitle: "Thank you for exploring your options",
+      internalTitle: "Nurture Lead",
       qualified: false,
-      reason:
-        "You may not be ready to begin treatment yet, but the Aria team can still help you understand available options.",
+      explanation:
+        "This visitor submitted valid information but is not currently ready for immediate treatment.",
     };
   }, [answers]);
+
+  const beginQuiz = () => {
+    setStarted(true);
+    window.setTimeout(() => {
+      document.getElementById("quiz")?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  };
 
   const choose = (value: string) => {
     const question = questions[step];
     setAnswers((current) => ({ ...current, [question.key]: value }));
 
-    setTimeout(() => {
-      if (step < questions.length - 1) setStep((current) => current + 1);
-      else setStep(questions.length);
-    }, 150);
+    window.setTimeout(() => {
+      if (step < questions.length - 1) {
+        setStep((current) => current + 1);
+      } else {
+        setStep(questions.length);
+      }
+    }, 140);
   };
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -174,49 +185,46 @@ export default function Home() {
     setShowEvents(false);
   };
 
-  const beginQuiz = () => {
-    setStarted(true);
-    setTimeout(
-      () =>
-        document.getElementById("quiz")?.scrollIntoView({ behavior: "smooth" }),
-      50
-    );
-  };
-
   if (submitted) {
     return (
-      <main className="min-h-screen bg-black px-5 py-10 text-white">
+      <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6 sm:py-10">
         <div className="mx-auto max-w-4xl">
           <Image
             src="/images/aria-logo.png"
             alt="Aria Smile Design"
             width={210}
             height={90}
-            className="mx-auto mb-8 h-auto w-44 object-contain"
+            className="mx-auto mb-7 h-auto w-40 object-contain sm:w-44"
             priority
           />
 
-          <section className="overflow-hidden rounded-[2rem] border border-[#d6b968]/40 bg-[#111]">
-            <div className="border-b border-white/10 p-8 md:p-10">
-              <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#d6b968]">
+          <section className="overflow-hidden rounded-3xl border border-[#d6b968]/40 bg-[#111] shadow-2xl">
+            <div className="border-b border-white/10 p-6 sm:p-8 md:p-10">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
                 Your next step
               </p>
-              <h1 className="mt-3 text-4xl font-semibold md:text-5xl">
-                {result.name}
+              <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+                {result.publicTitle}
               </h1>
-              <p className="mt-4 max-w-2xl leading-7 text-white/65">
-                {result.reason}
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/65 sm:text-base">
+                An Aria team member would review your answers and discuss
+                treatment options, timing, travel, pricing, financing, and
+                consultation availability.
               </p>
             </div>
 
-            <div className="grid gap-5 p-8 md:grid-cols-2 md:p-10">
-              <div className="rounded-3xl bg-white p-6 text-black">
+            <div className="grid gap-5 p-6 sm:p-8 md:grid-cols-2 md:p-10">
+              <div className="rounded-3xl bg-white p-5 text-black sm:p-6">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-black/45">
                   Internal demonstration
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold">
-                  {result.internalName}
+                  {result.internalTitle}
                 </h2>
+                <p className="mt-3 text-sm leading-6 text-black/60">
+                  {result.explanation}
+                </p>
+
                 <div className="mt-5 space-y-4 text-sm">
                   {Object.entries(answers).map(([key, value]) => (
                     <div key={key} className="border-b border-black/10 pb-3">
@@ -227,19 +235,20 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
                 <h2 className="text-xl font-semibold">
                   Proposed conversion logic
                 </h2>
-                <p className="mt-4 leading-7 text-white/60">
-                  Every valid form submission becomes a standard lead. The
-                  stronger qualified-lead signal is only sent when the visitor
-                  can travel to Miami, wants treatment within 90 days, and has
-                  a viable payment path.
+                <p className="mt-4 text-sm leading-7 text-white/60 sm:text-base">
+                  Every valid submission becomes a standard lead. The stronger
+                  qualified lead signal is only sent when the visitor can
+                  travel to Miami, wants treatment within 90 days, and has a
+                  realistic payment path.
                 </p>
                 <button
+                  type="button"
                   onClick={() => setShowEvents((value) => !value)}
-                  className="mt-6 w-full rounded-full bg-[#d6b968] px-5 py-3 font-bold text-black"
+                  className="mt-6 w-full rounded-full bg-[#d6b968] px-5 py-3.5 font-bold text-black"
                 >
                   {showEvents ? "Hide event map" : "Show event map"}
                 </button>
@@ -247,8 +256,8 @@ export default function Home() {
             </div>
 
             {showEvents && (
-              <div className="border-t border-white/10 p-8 md:p-10">
-                <div className="grid gap-4 md:grid-cols-3">
+              <div className="border-t border-white/10 p-6 sm:p-8 md:p-10">
+                <div className="grid gap-4 sm:grid-cols-3">
                   {[
                     ["Meta", "Lead", "QualifiedLead"],
                     ["TikTok", "SubmitForm", "QualifiedLead"],
@@ -267,18 +276,25 @@ export default function Home() {
                             : "text-white/35"
                         }`}
                       >
-                        {result.qualified ? "✓" : "—"} {qualified}
+                        {result.qualified ? "✓" : "•"} {qualified}
                       </p>
                     </div>
                   ))}
                 </div>
+
+                <div className="mt-5 rounded-2xl border border-[#d6b968]/25 bg-[#d6b968]/10 p-5 text-sm leading-7 text-white/70">
+                  Later CRM events should include consultation scheduled,
+                  consultation attended, deposit paid, treatment purchased, and
+                  actual revenue.
+                </div>
               </div>
             )}
 
-            <div className="border-t border-white/10 p-8 md:p-10">
+            <div className="border-t border-white/10 p-6 sm:p-8 md:p-10">
               <button
+                type="button"
                 onClick={restart}
-                className="rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black"
+                className="w-full rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black sm:w-auto"
               >
                 Run Another Lead Scenario
               </button>
@@ -290,93 +306,107 @@ export default function Home() {
   }
 
   return (
-    <main className="bg-[#f4efe4] text-[#111]">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 px-5 py-4 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
+    <main className="bg-[#f5f1e8] text-[#111]">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/95 px-4 py-3.5 text-white backdrop-blur sm:px-6 sm:py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <Image
             src="/images/aria-logo.png"
             alt="Aria Smile Design"
             width={180}
             height={70}
-            className="h-auto w-36 object-contain"
+            className="h-auto w-32 object-contain sm:w-40"
             priority
           />
           <button
+            type="button"
             onClick={beginQuiz}
-            className="rounded-full bg-[#d6b968] px-5 py-2.5 text-sm font-bold text-black"
+            className="shrink-0 rounded-full bg-[#d6b968] px-4 py-2.5 text-xs font-bold text-black sm:px-5 sm:text-sm"
           >
             Find My Smile Option
           </button>
         </div>
       </header>
 
-      <section className="bg-black px-5 py-16 text-white md:py-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
+      <section className="relative overflow-hidden bg-black px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,185,104,0.16),transparent_34%)]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[1.05fr_.95fr] md:gap-12">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#d6b968]">
-              Aria Smile Design · Miami
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
+              Aria Smile Design, Miami
             </p>
-            <h1 className="mt-4 text-5xl font-semibold leading-[1.04] md:text-7xl">
-              Your smile should make you feel confident not self-conscious!
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.05] sm:text-5xl md:text-7xl">
+              Feel confident showing your smile again.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
-              Answer a few quick questions to explore which smile treatment may
-              fit your goals, timeline, budget, and ability to travel to Aria
-              Smile Design in Miami.
+            <p className="mt-5 max-w-2xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8 md:text-xl">
+              Take the 60-second smile questionnaire to explore treatment
+              options, pricing, financing, travel requirements, and your next
+              step with Aria Smile Design.
             </p>
-            <p className="mt-4 text-base font-medium text-[#d6b968]">
+            <p className="mt-4 text-sm font-semibold leading-6 text-[#d6b968] sm:text-base">
               Treatment options start from $2,500. Financing may be available
               for qualified applicants.
             </p>
-            <button
-              onClick={beginQuiz}
-              className="mt-8 rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black"
-            >
-              Find My Smile Option
-            </button>
-            <div className="mt-7 flex flex-wrap gap-4 text-sm text-white/50">
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={beginQuiz}
+                className="rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black"
+              >
+                Find My Smile Option
+              </button>
+              <a
+                href="#what-happens-next"
+                className="rounded-full border border-white/20 px-7 py-4 text-center font-semibold text-white"
+              >
+                See What Happens Next
+              </a>
+            </div>
+
+            <div className="mt-6 grid gap-2 text-sm text-white/50 sm:flex sm:flex-wrap sm:gap-x-5">
               <span>✓ About 60 seconds</span>
               <span>✓ No obligation</span>
               <span>✓ Nationwide patients welcome</span>
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[2rem] border border-[#d6b968]/30 bg-[#111] p-3">
+          <div className="overflow-hidden rounded-3xl border border-[#d6b968]/30 bg-[#111] p-2.5 shadow-2xl sm:p-3">
             <Image
               src="/images/aria-before-after.png"
               alt="Aria Smile Design before and after transformations"
               width={1000}
               height={800}
-              className="h-auto w-full rounded-[1.4rem]"
+              className="h-auto w-full rounded-2xl"
               priority
             />
           </div>
         </div>
       </section>
 
-      <section className="px-5 py-16 md:py-20">
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[.9fr_1.1fr] md:items-center">
+      <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-20">
+        <div className="mx-auto grid max-w-7xl gap-7 md:grid-cols-[.85fr_1.15fr] md:items-center md:gap-10">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#8d7229]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
               You are not alone
             </p>
-            <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
               Do you find yourself hiding your smile?
             </h2>
           </div>
-          <div className="space-y-5 text-lg leading-8 text-black/65">
+          <div className="space-y-4 text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
             <p>
               Maybe you avoid showing your teeth in photos. Maybe you cover
-              your mouth when you laugh. Or maybe you have been thinking about
+              your mouth when you laugh. Or maybe you have thought about
               changing your smile for years but have not known where to begin.
             </p>
             <p>
-              The first step is not choosing a procedure. It is understanding
-              which option fits your smile goals, timeline, and budget.
+              The first step is understanding which option may fit your
+              concerns, timing, travel ability, and budget.
             </p>
             <button
+              type="button"
               onClick={beginQuiz}
-              className="rounded-full bg-black px-7 py-4 font-bold text-white"
+              className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
             >
               Take the Smile Questionnaire
             </button>
@@ -384,63 +414,107 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t border-black/10 px-5 py-16">
+      <section
+        id="what-happens-next"
+        className="border-y border-black/10 bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-20"
+      >
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#8d7229]">
+          <div className="max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
+              A useful first step
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+              Know what happens after you submit.
+            </h2>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
+              Your questionnaire gives the Aria team context before they speak
+              with you. The next conversation can focus on the questions that
+              matter most.
+            </p>
+          </div>
+
+          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ["1", "Review your goals", "Aria reviews your smile concerns and the treatment option you selected."],
+              ["2", "Discuss the right path", "The team explains which options may be worth exploring further."],
+              ["3", "Review the details", "Talk through timing, Miami travel, pricing, and financing availability."],
+              ["4", "Plan the consultation", "Schedule the right next step when the treatment and timing fit."],
+            ].map(([number, title, text]) => (
+              <article
+                key={number}
+                className="rounded-3xl border border-black/10 bg-[#f7f3ea] p-5 sm:p-6"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black font-bold text-[#d6b968]">
+                  {number}
+                </div>
+                <h3 className="mt-5 text-xl font-semibold">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-black/60">{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Treatment options
           </p>
-          <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
+          <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             A clearer path to the smile you want.
           </h2>
 
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-9 grid gap-4 md:grid-cols-3">
             {[
               {
                 title: "Express Smile",
                 price: "$3,000",
                 body:
-                  "A focused cosmetic option for patients who want to improve the appearance of their smile without beginning with a more extensive treatment plan.",
-                outcome:
-                  "A faster path toward a cleaner, more balanced smile.",
+                  "A focused cosmetic option for patients who want a faster path to a cleaner, more balanced smile.",
+                concerns:
+                  "May help improve concerns related to color, shape, minor spacing, or uneven-looking teeth.",
               },
               {
                 title: "Porcelain Smile",
                 price: "$5,000",
                 body:
-                  "A premium smile-transformation option for improving color, shape, spacing, symmetry, and overall appearance.",
-                outcome:
-                  "For patients seeking a more complete cosmetic transformation.",
+                  "A premium porcelain option for patients looking for a more complete cosmetic transformation.",
+                concerns:
+                  "May improve color, shape, spacing, symmetry, and the overall appearance of the smile.",
               },
               {
                 title: "Dental Implants",
                 price: "From $2,500",
                 body:
-                  "Replace a missing tooth with a stable, natural-looking solution designed to restore appearance and function.",
-                outcome:
-                  "A missing tooth should not control how you smile, eat, or speak.",
+                  "A restorative option for patients looking to replace a missing tooth with a stable, natural-looking solution.",
+                concerns:
+                  "Designed to restore appearance and function when a tooth is missing.",
               },
             ].map((item) => (
               <article
                 key={item.title}
-                className="rounded-[1.7rem] border border-black/10 bg-white p-7"
+                className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm"
               >
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#8d7229]">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8d7229] sm:text-sm">
                   {item.price}
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold">{item.title}</h3>
                 <p className="mt-4 leading-7 text-black/60">{item.body}</p>
-                <p className="mt-5 font-semibold leading-7">{item.outcome}</p>
+                <div className="mt-5 rounded-2xl bg-[#f5f1e8] p-4 text-sm leading-6 text-black/60">
+                  {item.concerns}
+                </div>
               </article>
             ))}
           </div>
 
-          <div className="mt-9 text-center">
-            <p className="mb-4 text-lg font-medium">
+          <div className="mt-8 text-center">
+            <p className="mb-4 text-base font-medium sm:text-lg">
               Not sure which treatment is right for you?
             </p>
             <button
+              type="button"
               onClick={beginQuiz}
-              className="rounded-full bg-black px-7 py-4 font-bold text-white"
+              className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
             >
               Find My Best Option
             </button>
@@ -448,37 +522,37 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="quiz" className="bg-[#111] px-5 py-16 text-white md:py-24">
+      <section id="quiz" className="bg-[#111] px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
         <div className="mx-auto max-w-4xl">
           {!started ? (
-            <div className="rounded-[2rem] border border-[#d6b968]/30 bg-black p-9 text-center md:p-14">
-              <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#d6b968]">
+            <div className="rounded-3xl border border-[#d6b968]/30 bg-black p-6 text-center sm:p-9 md:p-14">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
                 Personalized treatment path
               </p>
-              <h2 className="mt-4 text-4xl font-semibold md:text-5xl">
+              <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
                 Find out which smile option may fit you.
               </h2>
-              <p className="mx-auto mt-5 max-w-2xl leading-7 text-white/60">
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
                 Your answers help Aria understand what you want to improve, how
                 soon you want treatment, whether you can travel to Miami, and
-                which payment path may work for you.
+                which payment option may work for you.
               </p>
-              <div className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-4 text-sm text-white/50">
+              <div className="mx-auto mt-6 grid max-w-2xl gap-2 text-sm text-white/50 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
                 <span>✓ About 60 seconds</span>
                 <span>✓ No obligation</span>
                 <span>✓ Financing may be available</span>
-                <span>✓ Nationwide patients welcome</span>
               </div>
               <button
+                type="button"
                 onClick={() => setStarted(true)}
-                className="mt-8 rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black"
+                className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black sm:w-auto"
               >
                 Start My Smile Questionnaire
               </button>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-black">
-              <div className="border-b border-white/10 px-7 py-5">
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
+              <div className="border-b border-white/10 px-5 py-5 sm:px-7">
                 <div className="flex justify-between text-sm">
                   <span className="font-semibold text-[#d6b968]">
                     {step < questions.length
@@ -500,19 +574,20 @@ export default function Home() {
               </div>
 
               {step < questions.length ? (
-                <div className="p-7 md:p-10">
-                  <h2 className="text-3xl font-semibold md:text-4xl">
+                <div className="p-5 sm:p-7 md:p-10">
+                  <h2 className="text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
                     {questions[step].title}
                   </h2>
-                  <p className="mt-3 text-white/50">
+                  <p className="mt-3 text-sm leading-6 text-white/50 sm:text-base">
                     {questions[step].helper}
                   </p>
-                  <div className="mt-8 grid gap-3">
+                  <div className="mt-7 grid gap-3">
                     {questions[step].options.map((option) => (
                       <button
+                        type="button"
                         key={option}
                         onClick={() => choose(option)}
-                        className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-left font-medium transition hover:border-[#d6b968]/70"
+                        className="min-h-14 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-left text-sm font-medium transition hover:border-[#d6b968]/70 hover:bg-white/[0.07] sm:text-base"
                       >
                         {option}
                       </button>
@@ -520,35 +595,35 @@ export default function Home() {
                   </div>
                   {step > 0 && (
                     <button
+                      type="button"
                       onClick={() => setStep((current) => current - 1)}
                       className="mt-6 text-sm font-semibold text-white/50"
                     >
-                      ← Back
+                      Back
                     </button>
                   )}
                 </div>
               ) : (
                 <form
                   onSubmit={submit}
-                  className="bg-[#f4efe4] p-7 text-black md:p-10"
+                  className="bg-[#f5f1e8] p-5 text-black sm:p-7 md:p-10"
                 >
-                  <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#8d7229]">
-                    Your personalized next step
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
+                    Your next step
                   </p>
-                  <h2 className="mt-3 text-3xl font-semibold md:text-4xl">
-                    Get your personalized next step.
+                  <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
+                    Let Aria review your answers.
                   </h2>
-                  <p className="mt-4 max-w-2xl leading-7 text-black/60">
-                    Enter your information so the Aria team can review your
-                    answers and discuss treatment options, availability,
-                    financing, and what comes next.
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-black/60 sm:text-base">
+                    Enter your information so the Aria team can discuss your
+                    treatment interests, timing, travel, pricing, financing,
+                    and consultation availability.
                   </p>
                   <p className="mt-3 text-sm font-medium text-black/55">
-                    No obligation to begin treatment. Your information is used
-                    only to respond to your inquiry.
+                    There is no obligation to begin treatment.
                   </p>
 
-                  <div className="mt-8 grid gap-4 md:grid-cols-2">
+                  <div className="mt-7 grid gap-4 sm:grid-cols-2">
                     {[
                       ["First name", "text"],
                       ["Last name", "text"],
@@ -560,31 +635,31 @@ export default function Home() {
                         <input
                           required
                           type={type}
-                          className="rounded-xl border border-black/15 bg-white px-4 py-3.5 text-black outline-none focus:border-[#8d7229]"
+                          className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
                         />
                       </label>
                     ))}
                   </div>
 
                   <label className="mt-6 flex gap-3 text-sm leading-6 text-black/50">
-                    <input required type="checkbox" className="mt-1" />
+                    <input required type="checkbox" className="mt-1 h-4 w-4 shrink-0" />
                     <span>
                       I consent to receive calls, emails, and text messages
-                      regarding my inquiry.
+                      regarding my inquiry. Message and data rates may apply.
                     </span>
                   </label>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                     <button
                       type="submit"
-                      className="rounded-full bg-black px-7 py-4 font-bold text-white"
+                      className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
                     >
                       Show Me My Next Step
                     </button>
                     <button
                       type="button"
                       onClick={() => setStep(questions.length - 1)}
-                      className="rounded-full border border-black/15 px-7 py-4 font-semibold"
+                      className="w-full rounded-full border border-black/15 px-7 py-4 font-semibold sm:w-auto"
                     >
                       Back
                     </button>
@@ -596,48 +671,49 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-5 py-16 md:py-24">
+      <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#8d7229]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Smile transformations
           </p>
-          <h2 className="mt-3 max-w-4xl text-4xl font-semibold md:text-5xl">
+          <h2 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Imagine feeling comfortable showing your smile again.
           </h2>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-black/60">
-            Every smile begins with different concerns and goals. These patient
-            transformations show what may be possible with a personalized
+          <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
+            Every patient begins with different concerns and goals. These
+            transformations show what may be possible with an individualized
             treatment plan.
           </p>
-          <div className="mt-9 overflow-hidden rounded-[2rem] border border-black/10 bg-white p-3">
+          <div className="mt-8 overflow-hidden rounded-3xl border border-black/10 bg-white p-2.5 shadow-sm sm:p-3">
             <Image
               src="/images/aria-before-after.png"
               alt="Aria patient smile transformations"
               width={1200}
               height={900}
-              className="h-auto w-full rounded-[1.4rem]"
+              className="h-auto w-full rounded-2xl"
             />
           </div>
-          <p className="mt-4 text-sm text-black/45">
+          <p className="mt-4 text-xs leading-5 text-black/45 sm:text-sm">
             Individual results vary. A consultation is required to determine
             treatment suitability.
           </p>
         </div>
       </section>
 
-      <section className="border-t border-black/10 px-5 py-16 md:py-24">
+      <section className="border-y border-black/10 bg-white px-4 py-14 sm:px-6 sm:py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#8d7229]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Patient experiences
           </p>
-          <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
+          <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Patients remember more than the final result.
           </h2>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-black/60">
+          <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
             They remember how they were treated, how clearly the process was
             explained, and how comfortable they felt along the way.
           </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+
+          <div className="mt-9 grid gap-4 md:grid-cols-3">
             {[
               "/images/review-carlos.png",
               "/images/review-melanni.png",
@@ -645,14 +721,14 @@ export default function Home() {
             ].map((src, index) => (
               <div
                 key={src}
-                className="rounded-[1.5rem] border border-black/10 bg-white p-3"
+                className="rounded-3xl border border-black/10 bg-[#f7f3ea] p-3"
               >
                 <Image
                   src={src}
-                  alt={`Aria patient review ${index + 1}`}
+                  alt={`Aria patient Google review ${index + 1}`}
                   width={800}
                   height={900}
-                  className="h-auto w-full rounded-xl"
+                  className="h-auto w-full rounded-2xl"
                 />
               </div>
             ))}
@@ -660,54 +736,71 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-black px-5 py-16 text-white md:py-24">
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2">
+      <section className="bg-black px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
+        <div className="mx-auto grid max-w-7xl gap-7 md:grid-cols-[.85fr_1.15fr] md:gap-10">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#d6b968]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
               Meet your dentist
             </p>
-            <h2 className="mt-3 text-4xl font-semibold">
-              Experience, precision, and a personalized approach.
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
+              Experience, precision, and a personal approach.
             </h2>
-            <p className="mt-5 leading-7 text-white/60">
+            <p className="mt-5 text-sm leading-7 text-white/60 sm:text-base">
               Dr. Ana Blain combines advanced dental education, cosmetic
               experience, and an individualized approach to help patients
               understand their options and make informed treatment decisions.
             </p>
           </div>
-          <div className="rounded-[1.7rem] border border-white/10 bg-white/5 p-7">
+
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-2xl font-semibold">Dr. Ana Blain, DMD</h3>
-            <p className="mt-4 leading-7 text-white/55">
-              Boston University Doctor in Dental Medicine with High Honors.
-              Doctor of Dentistry, Golden Title, from the Faculty of Medical
-              Sciences in Havana. Certified Invisalign Provider with facial
-              injectables and BLS/CPR certifications.
-            </p>
+            <div className="mt-5 grid gap-3 text-sm leading-6 text-white/58">
+              <p>Boston University, Doctor in Dental Medicine, High Honors</p>
+              <p>
+                Faculty of Medical Sciences, Havana, Doctor of Dentistry,
+                Golden Title
+              </p>
+              <p>Certified Invisalign Provider</p>
+              <p>Facial Injectables Certification</p>
+              <p>BLS/CPR, American Heart Association</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="px-5 py-16 md:py-24">
-        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-2 md:items-center">
+      <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <div className="mx-auto grid max-w-7xl gap-7 md:grid-cols-2 md:items-center md:gap-10">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#8d7229]">
-              Flexible payment paths
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
+              Flexible payment options
             </p>
-            <h2 className="mt-3 text-4xl font-semibold md:text-5xl">
-              Do not let uncertainty about payment stop you from exploring your
-              options.
+            <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+              Explore your options before deciding what is possible.
             </h2>
           </div>
           <div>
-            <p className="text-lg leading-8 text-black/60">
+            <p className="text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
               Aria works with third-party financing providers that may offer
               flexible payment options to qualified applicants. The team can
-              explain available choices and help you understand which path may
-              fit your situation.
+              explain available choices and help you understand which option
+              may fit your situation.
             </p>
+            <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
+              {["Cherry", "CareCredit", "Sunbit", "Proceed Finance"].map(
+                (provider) => (
+                  <span
+                    key={provider}
+                    className="rounded-full border border-black/10 bg-white px-4 py-2"
+                  >
+                    {provider}
+                  </span>
+                )
+              )}
+            </div>
             <button
+              type="button"
               onClick={beginQuiz}
-              className="mt-7 rounded-full bg-black px-7 py-4 font-bold text-white"
+              className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
             >
               See My Treatment Options
             </button>
@@ -715,19 +808,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#d6b968] px-5 py-16 text-black md:py-20">
+      <section className="bg-[#d6b968] px-4 py-14 text-black sm:px-6 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-bold uppercase tracking-[0.22em]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] sm:text-sm">
             Traveling to Miami
           </p>
-          <h2 className="mt-3 max-w-4xl text-4xl font-semibold md:text-5xl">
-            Plan your smile transformation with the process explained in
-            advance.
+          <h2 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+            Understand the process before you make travel plans.
           </h2>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-black/65">
+          <p className="mt-5 max-w-3xl text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
             Aria Smile Design welcomes patients from across the United States.
-            Treatment requirements and scheduling can be reviewed before
-            travel so you understand what to expect.
+            Treatment requirements, timing, and consultation availability can
+            be reviewed before travel so you know what to expect.
           </p>
           <p className="mt-5 font-semibold">
             1645 SW 107 Ave, Miami, FL 33165
@@ -735,23 +827,66 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#0a0a0a] px-5 py-16 text-white md:py-24">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#d6b968]">
+      <section className="px-4 py-14 sm:px-6 sm:py-16 md:py-24">
+        <div className="mx-auto max-w-5xl">
+          <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
+            Common questions
+          </p>
+          <h2 className="mt-3 text-center text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+            Clarity before commitment.
+          </h2>
+
+          <div className="mt-9 grid gap-4">
+            {[
+              [
+                "Do I need to know which treatment I want?",
+                "No. Choose the option that says you need help selecting a treatment. The Aria team can explain which options may be worth discussing.",
+              ],
+              [
+                "Does submitting the questionnaire commit me to treatment?",
+                "No. It is simply a first step that helps Aria understand your goals and contact you about possible next steps.",
+              ],
+              [
+                "Can I travel from another state?",
+                "Yes. Aria welcomes patients from across the United States. The team can explain timing and scheduling before you make travel plans.",
+              ],
+              [
+                "Is financing available?",
+                "Aria works with third-party financing providers. Approval and terms depend on the provider and the applicant.",
+              ],
+            ].map(([question, answer]) => (
+              <details
+                key={question}
+                className="group rounded-2xl border border-black/10 bg-white p-5"
+              >
+                <summary className="cursor-pointer list-none pr-8 font-semibold">
+                  {question}
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-black/60">{answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#0a0a0a] px-4 py-14 text-center text-white sm:px-6 sm:py-16 md:py-24">
+        <div className="mx-auto max-w-5xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
             Your next step
           </p>
-          <h2 className="mt-4 text-4xl font-semibold md:text-6xl">
+          <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl md:text-6xl">
             You have thought about changing your smile. Now find out what your
             next step could be.
           </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-white/60">
+          <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/60 sm:text-lg sm:leading-8">
             Complete the short questionnaire to explore treatment options,
-            pricing, financing, and whether Aria Smile Design may be a fit for
-            you.
+            pricing, financing, travel requirements, and whether Aria Smile
+            Design may be a fit for you.
           </p>
           <button
+            type="button"
             onClick={beginQuiz}
-            className="mt-8 rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black"
+            className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black sm:w-auto"
           >
             Find My Smile Option
           </button>
@@ -761,14 +896,14 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-black px-5 py-9 text-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-7 text-sm text-white/40 md:flex-row md:items-center md:justify-between">
+      <footer className="bg-black px-4 py-8 text-white sm:px-6 sm:py-9">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 border-t border-white/10 pt-7 text-xs leading-5 text-white/40 sm:text-sm md:flex-row md:items-center md:justify-between">
           <Image
             src="/images/aria-logo.png"
             alt="Aria Smile Design"
             width={150}
             height={60}
-            className="h-auto w-32"
+            className="h-auto w-28 sm:w-32"
           />
           <p>
             Proof of concept. Treatment suitability, pricing, and financing
