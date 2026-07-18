@@ -296,7 +296,7 @@ export default function Home() {
                       {item.number}
                     </div>
                     <h2 className="mt-4 text-lg font-semibold">{item.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-white/60">
+                    <p className="mt-2 text-sm leading-6 text-white/70">
                       {item.text}
                     </p>
                   </div>
@@ -343,7 +343,7 @@ export default function Home() {
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
                 <h2 className="text-xl font-semibold">Proposed tracking logic</h2>
-                <p className="mt-4 text-sm leading-7 text-white/60 sm:text-base">
+                <p className="mt-4 text-sm leading-7 text-white/75 sm:text-base">
                   Every valid form submission becomes a standard lead. The
                   stronger qualified lead signal is only sent when the visitor
                   can travel to Miami, wants to begin within 90 days, and has a
@@ -399,7 +399,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={restart}
-                className="w-full rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black sm:w-auto"
+                className="w-full rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.99] sm:w-auto"
               >
                 Run Another Lead Scenario
               </button>
@@ -425,7 +425,7 @@ export default function Home() {
           <button
             type="button"
             onClick={beginQuiz}
-            className="shrink-0 rounded-full bg-[#d6b968] px-4 py-2.5 text-xs font-bold text-black sm:px-5 sm:text-sm"
+            className="shrink-0 rounded-full bg-[#d6b968] px-4 py-2.5 text-xs font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.98] sm:px-5 sm:text-sm"
           >
             Start My Smile Review
           </button>
@@ -450,20 +450,21 @@ export default function Home() {
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-[#d6b968] sm:text-base">
               After speaking with you, Aria will explain how to send photos of
-              your smile for the dental team to review.
+              your smile so the dental team can review your situation before
+              discussing possible treatment options.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={beginQuiz}
-                className="rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black"
+                className="rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.99]"
               >
                 Start My Smile Review
               </button>
               <a
                 href="#what-happens-next"
-                className="rounded-full border border-white/20 px-7 py-4 text-center font-semibold text-white"
+                className="rounded-full border border-white/25 px-7 py-4 text-center font-semibold text-white transition hover:border-white/50 hover:bg-white/5 active:scale-[0.99]"
               >
                 See What Happens Next
               </a>
@@ -520,7 +521,7 @@ export default function Home() {
             <button
               type="button"
               onClick={beginQuiz}
-              className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
+              className="w-full rounded-full bg-black px-7 py-4 font-bold text-white transition hover:bg-black/85 active:scale-[0.99] sm:w-auto"
             >
               Take the Smile Questionnaire
             </button>
@@ -625,7 +626,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={beginQuiz}
-                className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
+                className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white transition hover:bg-black/85 active:scale-[0.99] sm:w-auto"
               >
                 Start My Smile Review
               </button>
@@ -647,7 +648,7 @@ export default function Home() {
               <h2 className="mt-4 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
                 Tell Aria what you want to change about your smile.
               </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
                 Your answers give the Aria team context before they contact
                 you. This helps the first conversation focus on your goals,
                 timing, Miami travel, and the next step that may make sense.
@@ -662,7 +663,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setStarted(true)}
-                className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black sm:w-auto"
+                className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.99] sm:w-auto"
               >
                 Start My Smile Questionnaire
               </button>
@@ -706,7 +707,7 @@ export default function Home() {
                         type="button"
                         key={option}
                         onClick={() => choose(option)}
-                        className="min-h-14 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-left text-sm font-medium transition hover:border-[#d6b968]/70 hover:bg-white/[0.07] sm:text-base"
+                        className="min-h-14 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 text-left text-sm font-medium transition hover:border-[#d6b968]/70 hover:bg-white/[0.07] active:scale-[0.995] sm:text-base"
                       >
                         {option}
                       </button>
@@ -858,7 +859,7 @@ export default function Home() {
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                     <button
                       type="submit"
-                      className="w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
+                      className="w-full rounded-full bg-black px-7 py-4 font-bold text-white transition hover:bg-black/85 active:scale-[0.99] sm:w-auto"
                     >
                       Show Me My Next Step
                     </button>
@@ -944,34 +945,53 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-black px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
-        <div className="mx-auto grid max-w-7xl gap-7 md:grid-cols-[.85fr_1.15fr] md:gap-10">
-          <div>
+      <section className="overflow-hidden bg-black px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
+        <div className="mx-auto grid max-w-7xl items-end gap-8 md:grid-cols-[.9fr_1.1fr] md:gap-12">
+          <div className="relative order-2 md:order-1">
+            <div className="absolute inset-x-8 bottom-0 h-2/3 rounded-full bg-[#d6b968]/10 blur-3xl" />
+            <Image
+              src="/images/dr-ana-blain.png"
+              alt="Dr. Ana Blain, DMD at Aria Smile Design"
+              width={520}
+              height={760}
+              className="relative mx-auto h-auto w-full max-w-[420px] object-contain object-bottom sm:max-w-[470px]"
+            />
+          </div>
+
+          <div className="order-1 md:order-2 md:pb-10">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
               Meet your dentist
             </p>
-            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl">
+            <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
               Experience, precision, and a personal approach.
             </h2>
-            <p className="mt-5 text-sm leading-7 text-white/60 sm:text-base">
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
               Dr. Ana Blain combines advanced dental education, cosmetic
               experience, and an individualized approach to help patients
               understand their options and make informed treatment decisions.
             </p>
-          </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h3 className="text-2xl font-semibold">Dr. Ana Blain, DMD</h3>
-            <div className="mt-5 grid gap-3 text-sm leading-6 text-white/60">
-              <p>Boston University, Doctor in Dental Medicine, High Honors</p>
-              <p>
-                Faculty of Medical Sciences, Havana, Doctor of Dentistry,
-                Golden Title
-              </p>
-              <p>Certified Invisalign Provider</p>
-              <p>Facial Injectables Certification</p>
-              <p>BLS/CPR, American Heart Association</p>
+            <div className="mt-7 rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
+              <h3 className="text-2xl font-semibold">Dr. Ana Blain, DMD</h3>
+              <div className="mt-5 grid gap-3 text-sm leading-6 text-white/65 sm:grid-cols-2">
+                <p>Boston University, Doctor in Dental Medicine, High Honors</p>
+                <p>
+                  Faculty of Medical Sciences, Havana, Doctor of Dentistry,
+                  Golden Title
+                </p>
+                <p>Certified Invisalign Provider</p>
+                <p>Facial Injectables Certification</p>
+                <p>BLS/CPR, American Heart Association</p>
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={beginQuiz}
+              className="mt-7 w-full rounded-full bg-[#d6b968] px-7 py-4 font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.99] sm:w-auto"
+            >
+              Start My Smile Review
+            </button>
           </div>
         </div>
       </section>
@@ -1011,7 +1031,7 @@ export default function Home() {
             <button
               type="button"
               onClick={beginQuiz}
-              className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white sm:w-auto"
+              className="mt-7 w-full rounded-full bg-black px-7 py-4 font-bold text-white transition hover:bg-black/85 active:scale-[0.99] sm:w-auto"
             >
               Start My Smile Review
             </button>
@@ -1089,7 +1109,7 @@ export default function Home() {
             You have thought about changing your smile. Now find out what your
             next step could be.
           </h2>
-          <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/60 sm:text-lg sm:leading-8">
+          <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">
             Complete the short questionnaire so Aria can understand your goals,
             contact you within 24 hours, and explain how to submit photos of
             your smile for review.
@@ -1097,7 +1117,7 @@ export default function Home() {
           <button
             type="button"
             onClick={beginQuiz}
-            className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black sm:w-auto"
+            className="mt-8 w-full rounded-full bg-[#d6b968] px-8 py-4 font-bold text-black transition hover:bg-[#e2c978] active:scale-[0.99] sm:w-auto"
           >
             Start My Smile Review
           </button>
