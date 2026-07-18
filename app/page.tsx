@@ -201,16 +201,75 @@ export default function Home() {
           <section className="overflow-hidden rounded-3xl border border-[#d6b968]/40 bg-[#111] shadow-2xl">
             <div className="border-b border-white/10 p-6 sm:p-8 md:p-10">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
-                Your next step
+                Your smile questionnaire is complete
               </p>
               <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-                {result.publicTitle}
+                Thank you. The Aria team will contact you within 24 hours.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/65 sm:text-base">
-                An Aria team member would review your answers and discuss
-                treatment options, timing, travel, pricing, financing, and
-                consultation availability.
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 sm:text-base">
+                Look for a call or text from Aria Smile Design in Miami. A team
+                member will review the answers you submitted on this page and
+                speak with you about your smile goals, treatment options,
+                timing, travel, pricing, and financing.
               </p>
+            </div>
+
+            <div className="border-b border-white/10 bg-[#0b0b0b] p-6 sm:p-8 md:p-10">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d6b968] sm:text-sm">
+                What to expect next
+              </p>
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
+                    1
+                  </div>
+                  <h2 className="mt-4 text-lg font-semibold">
+                    Watch for Aria
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    An Aria Smile Design representative will call or text you
+                    within 24 hours about the smile questionnaire you just
+                    completed.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
+                    2
+                  </div>
+                  <h2 className="mt-4 text-lg font-semibold">
+                    Send smile photos
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    The representative will explain how to send clear photos of
+                    your current smile and teeth for the dental team to review.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
+                    3
+                  </div>
+                  <h2 className="mt-4 text-lg font-semibold">
+                    Review your options
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    After reviewing your information and photos, the team can
+                    discuss a treatment plan based on your particular smile.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-[#d6b968]/35 bg-[#d6b968]/10 p-5">
+                <p className="font-semibold text-[#ead58e]">
+                  Remember the name Aria Smile Design
+                </p>
+                <p className="mt-2 text-sm leading-6 text-white/70">
+                  When Aria contacts you, they will be following up on the
+                  smile questionnaire you completed here. Keep an eye on your
+                  phone so the team can help you take the next step.
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-5 p-6 sm:p-8 md:grid-cols-2 md:p-10">
