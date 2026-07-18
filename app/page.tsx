@@ -5,20 +5,29 @@ import { FormEvent, useMemo, useState } from "react";
 
 type Answers = {
   concern: string;
-  treatment: string;
+  motivation: string;
   timeline: string;
   travel: string;
   payment: string;
 };
 
+type Contact = {
+  firstName: string;
+  phone: string;
+  email: string;
+  zip: string;
+  contactMethod: string;
+  consent: boolean;
+};
+
 const questions = [
   {
     key: "concern",
-    title: "What would you most like to improve about your smile?",
+    title: "What would you most like to change about your smile?",
     helper: "Choose the concern that matters most to you right now.",
     options: [
       "Color or staining",
-      "Shape or size",
+      "Shape, size, or uneven teeth",
       "Gaps or spacing",
       "Chipped or damaged teeth",
       "Missing tooth or teeth",
@@ -27,10 +36,9 @@ const questions = [
     ],
   },
   {
-    key: "treatment",
+    key: "motivation",
     title: "What would changing your smile mean most to you?",
-    helper:
-      "Choose the result that feels most important in your life right now.",
+    helper: "Choose the result that feels most important in your life right now.",
     options: [
       "Feeling confident in photos",
       "Smiling without hiding my teeth",
@@ -42,28 +50,27 @@ const questions = [
   },
   {
     key: "timeline",
-    title: "When would you ideally like to begin treatment?",
-    helper:
-      "This helps Aria understand how quickly you would like to move forward.",
+    title: "When would you ideally like to begin improving your smile?",
+    helper: "This helps Aria understand how quickly you would like to move forward.",
     options: [
       "As soon as possible",
       "Within 30 days",
       "Within one to three months",
-      "More than three months from now",
-      "I am only researching",
+      "Within three to six months",
+      "I am researching for the future",
     ],
   },
   {
     key: "travel",
     title:
-      "Treatment takes place at Aria Smile Design in Miami. Can you travel to Miami?",
+      "If the recommended treatment and timing are right, would you be able to travel to Miami?",
     helper:
-      "Aria welcomes patients from across the United States. Scheduling can be reviewed before you travel.",
+      "Aria welcomes patients from across the United States and reviews scheduling before you travel.",
     options: [
-      "Yes",
-      "Yes, depending on scheduling",
-      "I would like more travel information",
-      "No",
+      "Yes, I can travel to Miami",
+      "Yes, depending on the schedule",
+      "I need more information before deciding",
+      "No, I cannot travel to Miami",
     ],
   },
   {
@@ -73,9 +80,9 @@ const questions = [
       "Financing may be available through third-party providers for qualified applicants.",
     options: [
       "Financing",
-      "Credit or debit card",
-      "Savings or cash",
-      "I would like to discuss my options",
+      "Savings, cash, or card",
+      "A combination of payment methods",
+      "I need to understand the cost first",
       "I am not financially ready",
     ],
   },
@@ -83,64 +90,86 @@ const questions = [
 
 const blankAnswers: Answers = {
   concern: "",
-  treatment: "",
+  motivation: "",
   timeline: "",
   travel: "",
   payment: "",
+};
+
+const blankContact: Contact = {
+  firstName: "",
+  phone: "",
+  email: "",
+  zip: "",
+  contactMethod: "Text me first",
+  consent: false,
 };
 
 export default function Home() {
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(blankAnswers);
+  const [contact, setContact] = useState<Contact>(blankContact);
   const [submitted, setSubmitted] = useState(false);
-  const [showEvents, setShowEvents] = useState(false);
+  const [showTracking, setShowTracking] = useState(false);
 
   const result = useMemo(() => {
     const canTravel =
-      answers.travel === "Yes" ||
-      answers.travel === "Yes, depending on scheduling";
+      answers.travel === "Yes, I can travel to Miami" ||
+      answers.travel === "Yes, depending on the schedule";
 
-    const readySoon = [
+    const readyWithin90Days = [
       "As soon as possible",
       "Within 30 days",
       "Within one to three months",
     ].includes(answers.timeline);
 
-    const hasPaymentPath = [
+    const viablePaymentPath = [
       "Financing",
-      "Credit or debit card",
-      "Savings or cash",
-      "I would like to discuss my options",
+      "Savings, cash, or card",
+      "A combination of payment methods",
+      "I need to understand the cost first",
     ].includes(answers.payment);
 
-    if (answers.travel === "No") {
+    const highPriority =
+      answers.travel === "Yes, I can travel to Miami" &&
+      ["As soon as possible", "Within 30 days"].includes(answers.timeline) &&
+      viablePaymentPath;
+
+    if (answers.travel === "No, I cannot travel to Miami") {
       return {
         publicTitle: "Treatment is completed in Miami",
-        internalTitle: "Currently Unqualified",
+        internalTitle: "Not Qualified",
         qualified: false,
+        highPriority: false,
         explanation:
           "Travel is currently the main limitation. Aria can still explain scheduling and the treatment process.",
       };
     }
 
-    if (canTravel && readySoon && hasPaymentPath) {
+    if (canTravel && readyWithin90Days && viablePaymentPath) {
       return {
         publicTitle: "You may be ready for the next step",
-        internalTitle: "Qualified Lead",
+        internalTitle: highPriority ? "High Priority Lead" : "Qualified Lead",
         qualified: true,
+        highPriority,
         explanation:
-          "This visitor can travel to Miami, wants treatment within 90 days, and has a realistic payment path.",
+          "This visitor can travel to Miami, wants to move forward within 90 days, and has a realistic payment path.",
       };
     }
 
-    if (canTravel && (readySoon || hasPaymentPath)) {
+    if (
+      answers.travel === "I need more information before deciding" ||
+      answers.payment === "I need to understand the cost first" ||
+      answers.timeline === "Within three to six months"
+    ) {
       return {
         publicTitle: "Your next step can start with a conversation",
         internalTitle: "Sales Review",
         qualified: false,
+        highPriority: false,
         explanation:
-          "This visitor shows meaningful interest but needs more qualification around timing or payment.",
+          "This visitor shows meaningful interest but needs more information about timing, travel, or cost.",
       };
     }
 
@@ -148,6 +177,7 @@ export default function Home() {
       publicTitle: "Thank you for exploring your options",
       internalTitle: "Nurture Lead",
       qualified: false,
+      highPriority: false,
       explanation:
         "This visitor submitted valid information but is not currently ready for immediate treatment.",
     };
@@ -162,7 +192,11 @@ export default function Home() {
 
   const choose = (value: string) => {
     const question = questions[step];
-    setAnswers((current) => ({ ...current, [question.key]: value }));
+
+    setAnswers((current) => ({
+      ...current,
+      [question.key]: value,
+    }));
 
     window.setTimeout(() => {
       if (step < questions.length - 1) {
@@ -175,22 +209,35 @@ export default function Home() {
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (
+      !contact.firstName.trim() ||
+      !contact.phone.trim() ||
+      !contact.email.trim() ||
+      !contact.zip.trim() ||
+      !contact.consent
+    ) {
+      return;
+    }
+
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const restart = () => {
     setAnswers(blankAnswers);
+    setContact(blankContact);
     setStep(0);
     setStarted(true);
     setSubmitted(false);
-    setShowEvents(false);
+    setShowTracking(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (submitted) {
     return (
       <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6 sm:py-10">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <Image
             src="/images/aria-logo.png"
             alt="Aria Smile Design"
@@ -206,60 +253,54 @@ export default function Home() {
                 Your smile questionnaire is complete
               </p>
               <h1 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-                Thank you. The Aria team will contact you within 24 hours.
+                Thank you, {contact.firstName}. Aria will contact you within 24 hours.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 sm:text-base">
-                Look for a call or text from Aria Smile Design in Miami. A team
-                member will review the answers you submitted on this page and
-                speak with you about your smile goals, treatment options,
-                timing, travel, pricing, and financing.
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-white/70 sm:text-base">
+                Look for a {contact.contactMethod.toLowerCase()} from Aria Smile
+                Design in Miami. The representative will be following up on the
+                smile questionnaire you completed here.
               </p>
             </div>
 
             <div className="border-b border-white/10 bg-[#0b0b0b] p-6 sm:p-8 md:p-10">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d6b968] sm:text-sm">
-                What to expect next
+                What happens next
               </p>
+
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
-                    1
+                {[
+                  {
+                    number: "1",
+                    title: "Watch for Aria",
+                    text:
+                      "An Aria Smile Design representative will call, text, or email you within 24 hours using your preferred contact method.",
+                  },
+                  {
+                    number: "2",
+                    title: "Send smile photos",
+                    text:
+                      "The representative will explain how to send clear photos of your current smile and teeth for the dental team to review.",
+                  },
+                  {
+                    number: "3",
+                    title: "Review your options",
+                    text:
+                      "After reviewing your answers and photos, Aria can discuss possible treatment, timing, travel, pricing, financing, and your next step.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.number}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-5"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
+                      {item.number}
+                    </div>
+                    <h2 className="mt-4 text-lg font-semibold">{item.title}</h2>
+                    <p className="mt-2 text-sm leading-6 text-white/60">
+                      {item.text}
+                    </p>
                   </div>
-                  <h2 className="mt-4 text-lg font-semibold">
-                    Watch for Aria
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    An Aria Smile Design representative will call or text you
-                    within 24 hours about the smile questionnaire you just
-                    completed.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
-                    2
-                  </div>
-                  <h2 className="mt-4 text-lg font-semibold">
-                    Send smile photos
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    The representative will explain how to send clear photos of
-                    your current smile and teeth for the dental team to review.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#d6b968] font-bold text-black">
-                    3
-                  </div>
-                  <h2 className="mt-4 text-lg font-semibold">
-                    Review your options
-                  </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    After reviewing your information and photos, the team can
-                    discuss a treatment plan based on your particular smile.
-                  </p>
-                </div>
+                ))}
               </div>
 
               <div className="mt-5 rounded-2xl border border-[#d6b968]/35 bg-[#d6b968]/10 p-5">
@@ -267,9 +308,13 @@ export default function Home() {
                   Remember the name Aria Smile Design
                 </p>
                 <p className="mt-2 text-sm leading-6 text-white/70">
-                  When Aria contacts you, they will be following up on the
-                  smile questionnaire you completed here. Keep an eye on your
-                  phone so the team can help you take the next step.
+                  When Aria contacts you, they will mention the smile
+                  questionnaire you completed and the goal you selected:
+                  <span className="font-semibold text-white">
+                    {" "}
+                    {answers.motivation}
+                  </span>
+                  .
                 </p>
               </div>
             </div>
@@ -277,7 +322,7 @@ export default function Home() {
             <div className="grid gap-5 p-6 sm:p-8 md:grid-cols-2 md:p-10">
               <div className="rounded-3xl bg-white p-5 text-black sm:p-6">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-black/45">
-                  Internal demonstration
+                  Internal presentation view
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold">
                   {result.internalTitle}
@@ -297,26 +342,24 @@ export default function Home() {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-                <h2 className="text-xl font-semibold">
-                  Proposed conversion logic
-                </h2>
+                <h2 className="text-xl font-semibold">Proposed tracking logic</h2>
                 <p className="mt-4 text-sm leading-7 text-white/60 sm:text-base">
-                  Every valid submission becomes a standard lead. The stronger
-                  qualified lead signal is only sent when the visitor can
-                  travel to Miami, wants treatment within 90 days, and has a
+                  Every valid form submission becomes a standard lead. The
+                  stronger qualified lead signal is only sent when the visitor
+                  can travel to Miami, wants to begin within 90 days, and has a
                   realistic payment path.
                 </p>
                 <button
                   type="button"
-                  onClick={() => setShowEvents((value) => !value)}
+                  onClick={() => setShowTracking((value) => !value)}
                   className="mt-6 w-full rounded-full bg-[#d6b968] px-5 py-3.5 font-bold text-black"
                 >
-                  {showEvents ? "Hide event map" : "Show event map"}
+                  {showTracking ? "Hide Tracking Logic" : "View Tracking Logic"}
                 </button>
               </div>
             </div>
 
-            {showEvents && (
+            {showTracking && (
               <div className="border-t border-white/10 p-6 sm:p-8 md:p-10">
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[
@@ -344,9 +387,10 @@ export default function Home() {
                 </div>
 
                 <div className="mt-5 rounded-2xl border border-[#d6b968]/25 bg-[#d6b968]/10 p-5 text-sm leading-7 text-white/70">
-                  Later CRM events should include consultation scheduled,
-                  consultation attended, deposit paid, treatment purchased, and
-                  actual revenue.
+                  Later CRM events should include smile photos submitted,
+                  treatment plan created, consultation scheduled, consultation
+                  attended, deposit paid, treatment purchased, and actual
+                  revenue.
                 </div>
               </div>
             )}
@@ -390,6 +434,7 @@ export default function Home() {
 
       <section className="relative overflow-hidden bg-black px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,185,104,0.16),transparent_34%)]" />
+
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[1.05fr_.95fr] md:gap-12">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
@@ -400,12 +445,12 @@ export default function Home() {
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/70 sm:text-lg sm:leading-8 md:text-xl">
               Take the 60-second smile questionnaire so Aria can understand
-              your goals, timeline, travel plans, and what you hope to change
+              your goals, timing, travel plans, and what you hope to change
               about your smile.
             </p>
             <p className="mt-4 text-sm font-semibold leading-6 text-[#d6b968] sm:text-base">
-              Your answers help Aria prepare a more relevant conversation
-              before asking you to send photos of your smile.
+              After speaking with you, Aria will explain how to send photos of
+              your smile for the dental team to review.
             </p>
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -423,6 +468,12 @@ export default function Home() {
                 See What Happens Next
               </a>
             </div>
+
+            <p className="mt-4 text-sm leading-6 text-white/45">
+              Saw a specific Aria offer in an ad? The team will confirm what is
+              included and whether it may fit your situation after reviewing
+              your information and smile photos.
+            </p>
 
             <div className="mt-6 grid gap-2 text-sm text-white/50 sm:flex sm:flex-wrap sm:gap-x-5">
               <span>✓ About 60 seconds</span>
@@ -454,6 +505,7 @@ export default function Home() {
               Do you find yourself hiding your smile?
             </h2>
           </div>
+
           <div className="space-y-4 text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
             <p>
               Maybe you avoid showing your teeth in photos. Maybe you cover
@@ -461,8 +513,9 @@ export default function Home() {
               changing your smile for years but have not known where to begin.
             </p>
             <p>
-              The first step is understanding which option may fit your
-              concerns, timing, travel ability, and budget.
+              The first step is understanding what you want to change and
+              whether Aria may be the right fit for your goals, timing, and
+              ability to travel to Miami.
             </p>
             <button
               type="button"
@@ -488,18 +541,34 @@ export default function Home() {
               Know what happens after you submit.
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
-              Your questionnaire gives the Aria team context before they speak
-              with you. The next conversation can focus on the questions that
-              matter most.
+              Your questionnaire gives Aria context before the first
+              conversation. The team can focus on the questions that matter
+              most to you.
             </p>
           </div>
 
           <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["1", "Complete the questionnaire", "Tell Aria what you want to change, when you want to begin, and whether you can travel to Miami."],
-              ["2", "Speak with Aria", "A representative contacts you within 24 hours and reviews the answers you submitted."],
-              ["3", "Send smile photos", "The representative explains how to send clear photos of your smile and teeth for review."],
-              ["4", "Discuss your next step", "Aria reviews the information and discusses possible treatment, timing, travel, pricing, and financing."],
+              [
+                "1",
+                "Complete the questionnaire",
+                "Tell Aria what you want to change, when you want to begin, and whether you can travel to Miami.",
+              ],
+              [
+                "2",
+                "Speak with Aria",
+                "A representative contacts you within 24 hours and reviews the answers you submitted.",
+              ],
+              [
+                "3",
+                "Send smile photos",
+                "The representative explains how to send clear photos of your smile and teeth for review.",
+              ],
+              [
+                "4",
+                "Discuss your next step",
+                "Aria reviews the information and discusses possible treatment, timing, travel, pricing, and financing.",
+              ],
             ].map(([number, title, text]) => (
               <article
                 key={number}
@@ -524,17 +593,19 @@ export default function Home() {
                 Personalized smile review
               </p>
               <h2 className="mt-3 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-                Your smile should not be reduced to a price or a package.
+                Your smile should not be reduced to a package.
               </h2>
             </div>
+
             <div>
               <p className="text-base leading-7 text-black/65 sm:text-lg sm:leading-8">
                 Every smile begins with a different concern. Aria first learns
                 what you want to change, how soon you want to move forward, and
-                whether you can travel to Miami. After the team speaks with you,
-                they will explain how to send photos of your smile so your
-                situation can be reviewed more carefully.
+                whether you can travel to Miami. After the team speaks with
+                you, they will explain how to send photos of your smile for a
+                more personal review.
               </p>
+
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[
                   "Color, shape, spacing, or symmetry",
@@ -550,6 +621,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
               <button
                 type="button"
                 onClick={beginQuiz}
@@ -562,12 +634,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="quiz" className="bg-[#111] px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24">
+      <section
+        id="quiz"
+        className="bg-[#111] px-4 py-14 text-white sm:px-6 sm:py-16 md:py-24"
+      >
         <div className="mx-auto max-w-4xl">
           {!started ? (
             <div className="rounded-3xl border border-[#d6b968]/30 bg-black p-6 text-center sm:p-9 md:p-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#d6b968] sm:text-sm">
-                Personalized treatment path
+                Personalized smile review
               </p>
               <h2 className="mt-4 font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
                 Tell Aria what you want to change about your smile.
@@ -577,11 +652,13 @@ export default function Home() {
                 you. This helps the first conversation focus on your goals,
                 timing, Miami travel, and the next step that may make sense.
               </p>
+
               <div className="mx-auto mt-6 grid max-w-2xl gap-2 text-sm text-white/50 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
                 <span>✓ About 60 seconds</span>
                 <span>✓ No obligation</span>
                 <span>✓ Financing may be available</span>
               </div>
+
               <button
                 type="button"
                 onClick={() => setStarted(true)}
@@ -603,6 +680,7 @@ export default function Home() {
                     {Math.round(((step + 1) / (questions.length + 1)) * 100)}%
                   </span>
                 </div>
+
                 <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div
                     className="h-full bg-[#d6b968]"
@@ -615,12 +693,13 @@ export default function Home() {
 
               {step < questions.length ? (
                 <div className="p-5 sm:p-7 md:p-10">
-                  <h2 className="text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
+                  <h2 className="font-[Georgia,serif] text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
                     {questions[step].title}
                   </h2>
                   <p className="mt-3 text-sm leading-6 text-white/50 sm:text-base">
                     {questions[step].helper}
                   </p>
+
                   <div className="mt-7 grid gap-3">
                     {questions[step].options.map((option) => (
                       <button
@@ -633,6 +712,7 @@ export default function Home() {
                       </button>
                     ))}
                   </div>
+
                   {step > 0 && (
                     <button
                       type="button"
@@ -651,38 +731,124 @@ export default function Home() {
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
                     Your next step
                   </p>
-                  <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
+                  <h2 className="mt-3 font-[Georgia,serif] text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
                     Let Aria review your answers.
                   </h2>
                   <p className="mt-4 max-w-2xl text-sm leading-7 text-black/60 sm:text-base">
                     Enter your information so an Aria representative can
-                    contact you within 24 hours, review your answers, and explain
-                    how to send photos of your smile and teeth.
+                    contact you within 24 hours, review your answers, and
+                    explain how to send photos of your smile and teeth.
                   </p>
                   <p className="mt-3 text-sm font-medium text-black/55">
                     There is no obligation to begin treatment.
                   </p>
 
                   <div className="mt-7 grid gap-4 sm:grid-cols-2">
-                    {[
-                      ["First name", "text"],
-                      ["Last name", "text"],
-                      ["Mobile phone", "tel"],
-                      ["Email address", "email"],
-                    ].map(([label, type]) => (
-                      <label key={label} className="grid gap-2 text-sm">
-                        <span className="font-medium text-black/65">{label}</span>
-                        <input
-                          required
-                          type={type}
-                          className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
-                        />
-                      </label>
-                    ))}
+                    <label className="grid gap-2 text-sm">
+                      <span className="font-medium text-black/65">First name</span>
+                      <input
+                        required
+                        type="text"
+                        autoComplete="given-name"
+                        value={contact.firstName}
+                        onChange={(event) =>
+                          setContact((current) => ({
+                            ...current,
+                            firstName: event.target.value,
+                          }))
+                        }
+                        className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
+                      />
+                    </label>
+
+                    <label className="grid gap-2 text-sm">
+                      <span className="font-medium text-black/65">Mobile phone</span>
+                      <input
+                        required
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        value={contact.phone}
+                        onChange={(event) =>
+                          setContact((current) => ({
+                            ...current,
+                            phone: event.target.value,
+                          }))
+                        }
+                        className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
+                      />
+                    </label>
+
+                    <label className="grid gap-2 text-sm">
+                      <span className="font-medium text-black/65">Email address</span>
+                      <input
+                        required
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        value={contact.email}
+                        onChange={(event) =>
+                          setContact((current) => ({
+                            ...current,
+                            email: event.target.value,
+                          }))
+                        }
+                        className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
+                      />
+                    </label>
+
+                    <label className="grid gap-2 text-sm">
+                      <span className="font-medium text-black/65">ZIP code</span>
+                      <input
+                        required
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="postal-code"
+                        value={contact.zip}
+                        onChange={(event) =>
+                          setContact((current) => ({
+                            ...current,
+                            zip: event.target.value,
+                          }))
+                        }
+                        className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
+                      />
+                    </label>
+
+                    <label className="grid gap-2 text-sm sm:col-span-2">
+                      <span className="font-medium text-black/65">
+                        How would you like Aria to contact you first?
+                      </span>
+                      <select
+                        value={contact.contactMethod}
+                        onChange={(event) =>
+                          setContact((current) => ({
+                            ...current,
+                            contactMethod: event.target.value,
+                          }))
+                        }
+                        className="min-h-12 rounded-xl border border-black/15 bg-white px-4 py-3.5 text-base text-black outline-none focus:border-[#8d7229]"
+                      >
+                        <option>Text me first</option>
+                        <option>Call me</option>
+                        <option>Email me</option>
+                      </select>
+                    </label>
                   </div>
 
                   <label className="mt-6 flex gap-3 text-sm leading-6 text-black/50">
-                    <input required type="checkbox" className="mt-1 h-4 w-4 shrink-0" />
+                    <input
+                      required
+                      type="checkbox"
+                      checked={contact.consent}
+                      onChange={(event) =>
+                        setContact((current) => ({
+                          ...current,
+                          consent: event.target.checked,
+                        }))
+                      }
+                      className="mt-1 h-4 w-4 shrink-0"
+                    />
                     <span>
                       I consent to receive calls, emails, and text messages
                       regarding my inquiry. Message and data rates may apply.
@@ -724,6 +890,7 @@ export default function Home() {
             transformations show what may be possible with an individualized
             treatment plan.
           </p>
+
           <div className="mt-8 overflow-hidden rounded-3xl border border-black/10 bg-white p-2.5 shadow-sm sm:p-3">
             <Image
               src="/images/aria-before-after.png"
@@ -733,6 +900,7 @@ export default function Home() {
               className="h-auto w-full rounded-2xl"
             />
           </div>
+
           <p className="mt-4 text-xs leading-5 text-black/45 sm:text-sm">
             Individual results vary. A consultation is required to determine
             treatment suitability.
@@ -794,7 +962,7 @@ export default function Home() {
 
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
             <h3 className="text-2xl font-semibold">Dr. Ana Blain, DMD</h3>
-            <div className="mt-5 grid gap-3 text-sm leading-6 text-white/58">
+            <div className="mt-5 grid gap-3 text-sm leading-6 text-white/60">
               <p>Boston University, Doctor in Dental Medicine, High Honors</p>
               <p>
                 Faculty of Medical Sciences, Havana, Doctor of Dentistry,
@@ -818,14 +986,15 @@ export default function Home() {
               Understand your options before deciding what is possible.
             </h2>
           </div>
+
           <div>
             <p className="text-base leading-7 text-black/60 sm:text-lg sm:leading-8">
               Treatment recommendations and final pricing depend on your
               individual situation. Aria works with third-party financing
               providers that may offer flexible payment options to qualified
-              applicants. The team can explain available choices after learning
-              more about your smile goals.
+              applicants.
             </p>
+
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
               {["Cherry", "CareCredit", "Sunbit", "Proceed Finance"].map(
                 (provider) => (
@@ -838,6 +1007,7 @@ export default function Home() {
                 )
               )}
             </div>
+
             <button
               type="button"
               onClick={beginQuiz}
@@ -873,7 +1043,7 @@ export default function Home() {
           <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-[#8d7229] sm:text-sm">
             Common questions
           </p>
-          <h2 className="mt-3 text-center text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
+          <h2 className="mt-3 text-center font-[Georgia,serif] text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
             Clarity before commitment.
           </h2>
 
@@ -881,7 +1051,7 @@ export default function Home() {
             {[
               [
                 "Do I need to know which treatment I want?",
-                "No. Choose the option that says you need help selecting a treatment. The Aria team can explain which options may be worth discussing.",
+                "No. Aria can learn about your concerns first and discuss which options may be worth exploring after reviewing your information and smile photos.",
               ],
               [
                 "Does submitting the questionnaire commit me to treatment?",
@@ -920,9 +1090,9 @@ export default function Home() {
             next step could be.
           </h2>
           <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/60 sm:text-lg sm:leading-8">
-            Complete the short questionnaire so Aria can understand your
-            goals, contact you within 24 hours, and explain how to submit photos
-            of your smile for review.
+            Complete the short questionnaire so Aria can understand your goals,
+            contact you within 24 hours, and explain how to submit photos of
+            your smile for review.
           </p>
           <button
             type="button"
@@ -947,8 +1117,8 @@ export default function Home() {
             className="h-auto w-28 sm:w-32"
           />
           <p>
-            Concept presentation for Aria Smile Design. Treatment suitability,
-            pricing, and financing require confirmation by the dental team.
+            Treatment suitability, pricing, financing, and final
+            recommendations require review by the Aria dental team.
           </p>
         </div>
       </footer>
