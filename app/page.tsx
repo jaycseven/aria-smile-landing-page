@@ -317,7 +317,7 @@ export default function Home() {
               Aria Smile Design · Miami
             </p>
             <h1 className="mt-4 text-5xl font-semibold leading-[1.04] md:text-7xl">
-              Your smile should make you feel confident — not self-conscious.
+              Your smile should make you feel confident not self-conscious!
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
               Answer a few quick questions to explore which smile treatment may
